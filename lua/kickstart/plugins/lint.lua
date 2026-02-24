@@ -5,8 +5,17 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
+      local venv = require 'kickstart.venv'
+
+      -- Use project venv's ruff when .venv or venv exists; otherwise system ruff.
+      lint.linters.ruff_venv = vim.tbl_deep_extend('force', { cmd = 'ruff' }, lint.linters.ruff or {
+        args = { 'check', '--stdin-filename', '$FILENAME', '-' },
+        stdin = true,
+        stream = 'stderr',
+      })
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
+        python = { 'ruff_venv' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
@@ -50,7 +59,14 @@ return {
           -- Only run the linter in buffers that you can modify in order to
           -- avoid superfluous noise, notably within the handy LSP pop-ups that
           -- describe the hovered symbol using Markdown.
-          if vim.bo.modifiable then lint.try_lint() end
+          if vim.bo.modifiable then
+            -- Use project venv's ruff for Python when available
+            if vim.bo.filetype == 'python' then
+              local ruff_path = venv.get_ruff_path(venv.get_venv_path_for_buf())
+              lint.linters.ruff_venv.cmd = ruff_path or 'ruff'
+            end
+            lint.try_lint()
+          end
         end,
       })
     end,
