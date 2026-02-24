@@ -996,16 +996,16 @@ require('neo-tree').setup {
     git_status = {
       symbols = {
         -- Change type
-        added = '', -- or "✚"
-        modified = '', -- or ""
-        deleted = '✖', -- this can only be used in the git_status source
-        renamed = '󰁕', -- this can only be used in the git_status source
+        added = '+', -- or "✚"
+        modified = 'M', -- or ""
+        deleted = 'D', -- this can only be used in the git_status source
+        renamed = 'R', -- this can only be used in the git_status source
         -- Status type
         untracked = '',
         ignored = '',
         unstaged = '󰄱',
         staged = '',
-        conflict = '',
+        conflict = 'C',
       },
     },
     -- If you don't want to use these columns, you can set `enabled = false` for each of them individually
