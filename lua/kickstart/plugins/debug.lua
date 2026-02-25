@@ -62,6 +62,11 @@ return {
       function() require('dapui').toggle() end,
       desc = 'Debug: See last session result.',
     },
+    {
+      '<F8>',
+      function() require('dap').terminate() end,
+      desc = 'Debug: Terminate',
+    },
     -- -- VSCode-style: pick a debug configuration (from .vscode/launch.json + built-in).
     -- {
     --   '<leader>dc',
@@ -108,16 +113,12 @@ return {
     local api = vim.api
     local orig_set_cursor = api.nvim_win_set_cursor
     api.nvim_win_set_cursor = function(win, pos)
-      if type(pos) == 'table' and #pos >= 1 and (pos[1] == nil or pos[1] == 0) then
-        pos = { 1, pos[2] or 0 }
-      end
+      if type(pos) == 'table' and #pos >= 1 and (pos[1] == nil or pos[1] == 0) then pos = { 1, pos[2] or 0 } end
       return orig_set_cursor(win, pos)
     end
 
     -- Load .vscode/launch.json into dap.configurations (optional; some nvim-dap versions auto-load).
-    pcall(function()
-      require('dap.ext.vscode').load_launchjs(nil, { ['python'] = { 'python' } })
-    end)
+    pcall(function() require('dap.ext.vscode').load_launchjs(nil, { ['python'] = { 'python' } }) end)
 
     require('mason-nvim-dap').setup {
       automatic_installation = true,

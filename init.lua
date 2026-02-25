@@ -114,6 +114,39 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
+--  In WSL2, the default provider (xclip/xsel) is not available; use Windows clipboard.
+if vim.fn.has('wsl') == 1 then
+  -- Option 1: win32yank (best). Install: https://github.com/equalsraf/win32yank/releases
+  --   Put win32yank.exe on your PATH (e.g. ~/.local/bin).
+  if vim.fn.executable('win32yank.exe') == 1 then
+    vim.g.clipboard = {
+      name = 'WslClipboard',
+      copy = {
+        ['+'] = 'win32yank.exe -i --crlf',
+        ['*'] = 'win32yank.exe -i --crlf',
+      },
+      paste = {
+        ['+'] = 'win32yank.exe -o --lf',
+        ['*'] = 'win32yank.exe -o --lf',
+      },
+      cache_enabled = 0,
+    }
+  else
+    -- Option 2: Use Windows clip.exe and PowerShell (no extra install).
+    vim.g.clipboard = {
+      name = 'WslClipboard',
+      copy = {
+        ['+'] = 'clip.exe',
+        ['*'] = 'clip.exe',
+      },
+      paste = {
+        ['+'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
+        ['*'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
+      },
+      cache_enabled = 0,
+    }
+  end
+end
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
 -- Enable break indent
@@ -157,7 +190,7 @@ vim.o.inccommand = 'split'
 vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 10
+vim.o.scrolloff = 5
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -875,6 +908,28 @@ require('lazy').setup({
       })
     end,
   },
+
+  --   -- GitHub Copilot (the original Vim plugin)
+  --   {
+  --     'github/copilot.vim',
+  --     -- Optional: Lazy load on a command or event
+  --     -- cmd = "Copilot",
+  --     -- event = "InsertEnter",
+  --   },
+  --
+  -- {
+  --   'olimorris/codecompanion.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'nvim-treesitter/nvim-treesitter',
+  --   },
+  --   opts = {
+  --     -- NOTE: The log_level is in `opts.opts`
+  --     opts = {
+  --       log_level = 'DEBUG', -- or "TRACE"
+  --     },
+  --   },
+  -- },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
