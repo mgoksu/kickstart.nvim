@@ -115,10 +115,10 @@ vim.o.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 --  In WSL2, the default provider (xclip/xsel) is not available; use Windows clipboard.
-if vim.fn.has('wsl') == 1 then
+if vim.fn.has 'wsl' == 1 then
   -- Option 1: win32yank (best). Install: https://github.com/equalsraf/win32yank/releases
   --   Put win32yank.exe on your PATH (e.g. ~/.local/bin).
-  if vim.fn.executable('win32yank.exe') == 1 then
+  if vim.fn.executable 'win32yank.exe' == 1 then
     vim.g.clipboard = {
       name = 'WslClipboard',
       copy = {
@@ -140,8 +140,8 @@ if vim.fn.has('wsl') == 1 then
         ['*'] = 'clip.exe',
       },
       paste = {
-        ['+'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
-        ['*'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
+        ["+"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        ["*"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
       },
       cache_enabled = 0,
     }
@@ -900,7 +900,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     config = function()
-      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'query', 'vim', 'vimdoc' }
       require('nvim-treesitter').install(filetypes)
       vim.api.nvim_create_autocmd('FileType', {
         pattern = filetypes,

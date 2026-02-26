@@ -14,7 +14,7 @@ return {
         stream = 'stderr',
       })
       lint.linters_by_ft = {
-        markdown = { 'markdownlint' },
+        -- markdown = { 'markdownlint' },
         python = { 'ruff_venv' },
       }
 
