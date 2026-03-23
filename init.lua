@@ -441,11 +441,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
-      vim.keymap.set('n', '<leader>saf', function() builtin.find_files { hidden = true } end, { desc = '[S]earch [A]ll [F]iles including hidden files' })
+      vim.keymap.set('n', '<leader>saf', function() builtin.find_files { hidden = true, no_ignore = true } end, { desc = '[S]earch [A]ll [F]iles including hidden files' })
       vim.keymap.set(
         'n',
         '<leader>sag',
-        function() builtin.live_grep { additional_args = { '--hidden' } } end,
+        function() builtin.live_grep { additional_args = { '--hidden', '--no-ignore' } } end,
         { desc = '[S]earch [A]ll by [G]rep including hidden files' }
       )
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
