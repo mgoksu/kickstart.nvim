@@ -140,8 +140,8 @@ if vim.fn.has 'wsl' == 1 then
         ['*'] = 'clip.exe',
       },
       paste = {
-        ["+"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
-        ["*"] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
       },
       cache_enabled = 0,
     }
@@ -628,8 +628,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- Pyright: uses project venv when .venv or venv exists (see on_init).
-        pyright = {
+        basedpyright = {
           on_init = function(client)
             local root = (client.workspace_folders and client.workspace_folders[1]) and client.workspace_folders[1].name or vim.fn.getcwd()
             local venv = require('kickstart.venv').get_venv_path(root)
@@ -640,7 +639,16 @@ require('lazy').setup({
               client.config.settings.python.pythonPath = python_path
             end
           end,
-          settings = { python = {} },
+          settings = {
+            basedpyright = {
+              analysis = {
+                typeCheckingMode = 'standard',
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'openFilesOnly',
+              },
+            },
+          },
         },
         -- rust_analyzer = {},
         --
